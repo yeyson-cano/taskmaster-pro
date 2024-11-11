@@ -1,0 +1,21 @@
+{
+  "name": "taskmaster-pro",
+  "version": "1.0.0",
+  "description": "TaskMaster Pro es una API RESTful serverless diseñada para simplificar la gestión de tareas en empresas de servicios de campo. Este proyecto permite a los coordinadores asignar tareas a técnicos y hacer seguimiento en tiempo real de su estado.",
+  "main": "handler.js",
+  "scripts": {
+    "start": "serverless offline",
+    "deploy": "serverless deploy",
+    "test": "echo \"No hay pruebas definidas\""
+  },
+  "keywords": [],
+  "author": "Yeyson Samir Cano Carbajo",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "serverless-offline": "^14.3.4"
+  }
+}

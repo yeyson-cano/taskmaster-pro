@@ -1,0 +1,101 @@
+service: taskmaster-pro
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  stage: dev
+
+  environment:
+    DYNAMODB_TABLE: TaskMasterPro-Tareas
+
+  apiGateway:
+    apiKeys:
+      - ${self:provider.stage}-api-key
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:Scan
+        - dynamodb:Query
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  createTarea:
+    handler: handlers/createTarea.handler
+    events:
+      - http:
+          path: tareas
+          method: post
+          cors: true
+          private: true
+
+  getTareas:
+    handler: handlers/getTareas.handler
+    events:
+      - http:
+          path: tareas
+          method: get
+          cors: true
+          private: true
+
+  getTareaById:
+    handler: handlers/getTareaById.handler
+    events:
+      - http:
+          path: tareas/{tareaId}
+          method: get
+          cors: true
+          request:
+            parameters:
+              paths:
+                tareaId: true
+          private: true
+
+  updateTarea:
+    handler: handlers/updateTarea.handler
+    events:
+      - http:
+          path: tareas/{tareaId}
+          method: put
+          cors: true
+          request:
+            parameters:
+              paths:
+                tareaId: true
+          private: true
+
+  deleteTarea:
+    handler: handlers/deleteTarea.handler
+    events:
+      - http:
+          path: tareas/{tareaId}
+          method: delete
+          cors: true
+          request:
+            parameters:
+              paths:
+                tareaId: true
+          private: true
+
+plugins:
+  - serverless-offline
+
+resources:
+  Resources:
+    TareasDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: tareaId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tareaId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
